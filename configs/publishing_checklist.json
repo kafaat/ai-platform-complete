@@ -1,0 +1,98 @@
+{
+  "pre_release": [
+    {
+      "task": "Code review completed",
+      "status": "\u2705",
+      "owner": "Tech Lead"
+    },
+    {
+      "task": "Security scan passed",
+      "status": "\u2705",
+      "owner": "Security Team"
+    },
+    {
+      "task": "Documentation updated",
+      "status": "\u2705",
+      "owner": "Tech Writers"
+    },
+    {
+      "task": "API specs finalized",
+      "status": "\u2705",
+      "owner": "API Team"
+    },
+    {
+      "task": "Performance benchmarks met",
+      "status": "\u2705",
+      "owner": "QA Team"
+    },
+    {
+      "task": "License headers added",
+      "status": "\u2705",
+      "owner": "Legal"
+    },
+    {
+      "task": "CHANGELOG updated",
+      "status": "\u2705",
+      "owner": "Release Manager"
+    }
+  ],
+  "release": [
+    {
+      "task": "Version tags created",
+      "status": "\u23f3",
+      "owner": "Release Manager"
+    },
+    {
+      "task": "Docker images published",
+      "status": "\u23f3",
+      "owner": "DevOps"
+    },
+    {
+      "task": "Helm charts published",
+      "status": "\u23f3",
+      "owner": "DevOps"
+    },
+    {
+      "task": "NPM packages published",
+      "status": "\u23f3",
+      "owner": "Frontend Team"
+    },
+    {
+      "task": "Documentation deployed",
+      "status": "\u23f3",
+      "owner": "Tech Writers"
+    },
+    {
+      "task": "Release notes published",
+      "status": "\u23f3",
+      "owner": "Product Manager"
+    }
+  ],
+  "post_release": [
+    {
+      "task": "Monitoring dashboards verified",
+      "status": "\u23f3",
+      "owner": "SRE Team"
+    },
+    {
+      "task": "Support team trained",
+      "status": "\u23f3",
+      "owner": "Training Team"
+    },
+    {
+      "task": "Customer notifications sent",
+      "status": "\u23f3",
+      "owner": "Marketing"
+    },
+    {
+      "task": "Feedback channels opened",
+      "status": "\u23f3",
+      "owner": "Product Team"
+    },
+    {
+      "task": "Hotfix process ready",
+      "status": "\u23f3",
+      "owner": "Engineering"
+    }
+  ]
+}

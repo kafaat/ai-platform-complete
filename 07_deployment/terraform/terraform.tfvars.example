@@ -1,0 +1,21 @@
+# AWS Configuration
+aws_region = "us-east-1"
+environment = "production"
+
+# EKS Configuration
+cluster_name    = "ai-platform-cluster"
+cluster_version = "1.28"
+
+# VPC Configuration
+vpc_cidr = "10.0.0.0/16"
+
+# RDS Configuration
+db_instance_class     = "db.r6g.xlarge"
+db_allocated_storage  = 100
+# db_password = "CHANGE_ME_IN_PRODUCTION"
+
+# EKS Node Configuration
+node_instance_types = ["t3.xlarge"]
+node_desired_size   = 10
+node_min_size       = 5
+node_max_size       = 20
