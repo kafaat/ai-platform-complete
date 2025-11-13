@@ -1,0 +1,200 @@
+usecases:
+  # Customer Support
+  - id: customer-support
+    name: "AI-Powered Customer Support"
+    category: support
+    enabled: true
+    description: "Automated customer support with AI agents"
+    features:
+      - ticket_classification
+      - automated_responses
+      - sentiment_analysis
+      - escalation_routing
+      - multilingual_support
+    agents:
+      - support-agent
+    tools:
+      - gpt-4
+      - elasticsearch
+      - redis
+    sla:
+      response_time_seconds: 5
+      resolution_time_minutes: 30
+      availability_percent: 99.9
+
+  # Fraud Detection
+  - id: fraud-detection
+    name: "Real-time Fraud Detection"
+    category: security
+    enabled: true
+    description: "AI-powered fraud detection and prevention"
+    features:
+      - transaction_monitoring
+      - pattern_analysis
+      - risk_scoring
+      - real_time_alerts
+      - behavioral_analysis
+    agents:
+      - fraud-agent
+    tools:
+      - custom-fraud-model
+      - redis
+      - rabbitmq
+    sla:
+      detection_time_ms: 100
+      false_positive_rate: 0.01
+      availability_percent: 99.99
+
+  # Personalized Recommendations
+  - id: recommendations
+    name: "Personalized Recommendations"
+    category: engagement
+    enabled: true
+    description: "AI-driven personalized product/content recommendations"
+    features:
+      - collaborative_filtering
+      - content_based_filtering
+      - hybrid_recommendations
+      - real_time_updates
+      - A/B_testing
+    agents:
+      - recommendation-agent
+    tools:
+      - hybrid-recommender
+      - redis
+      - postgresql
+    sla:
+      response_time_ms: 50
+      accuracy_percent: 85
+      availability_percent: 99.9
+
+  # Content Moderation
+  - id: content-moderation
+    name: "AI Content Moderation"
+    category: safety
+    enabled: true
+    description: "Automated content moderation and safety"
+    features:
+      - text_moderation
+      - image_moderation
+      - video_moderation
+      - toxicity_detection
+      - auto_action
+    agents:
+      - moderation-agent
+    tools:
+      - gpt-4
+      - custom-moderation-model
+      - rabbitmq
+    sla:
+      moderation_time_ms: 500
+      accuracy_percent: 95
+      availability_percent: 99.9
+
+  # Code Review Automation
+  - id: code-review
+    name: "Automated Code Review"
+    category: development
+    enabled: true
+    description: "AI-powered code review and analysis"
+    features:
+      - static_analysis
+      - security_scanning
+      - best_practices_check
+      - performance_analysis
+      - automated_suggestions
+    agents:
+      - code-review-agent
+    tools:
+      - codellama
+      - elasticsearch
+    sla:
+      review_time_minutes: 5
+      coverage_percent: 90
+      availability_percent: 99.5
+
+  # Data Analytics
+  - id: data-analytics
+    name: "AI Data Analytics"
+    category: analytics
+    enabled: true
+    description: "Automated data analysis and insights"
+    features:
+      - statistical_analysis
+      - trend_detection
+      - predictive_analytics
+      - automated_reporting
+      - visualization
+    agents:
+      - data-analysis-agent
+    tools:
+      - gpt-4
+      - postgresql
+      - elasticsearch
+    sla:
+      analysis_time_minutes: 10
+      accuracy_percent: 90
+      availability_percent: 99.5
+
+  # Document Processing
+  - id: document-processing
+    name: "Intelligent Document Processing"
+    category: automation
+    enabled: true
+    description: "AI-powered document extraction and processing"
+    features:
+      - ocr
+      - entity_extraction
+      - classification
+      - summarization
+      - translation
+    agents:
+      - support-agent
+      - data-analysis-agent
+    tools:
+      - gpt-4
+      - s3
+      - elasticsearch
+    sla:
+      processing_time_seconds: 30
+      accuracy_percent: 95
+      availability_percent: 99.5
+
+  # Chatbot
+  - id: ai-chatbot
+    name: "Enterprise AI Chatbot"
+    category: engagement
+    enabled: true
+    description: "Conversational AI for customer engagement"
+    features:
+      - natural_language_understanding
+      - context_awareness
+      - multilingual
+      - integration_apis
+      - analytics
+    agents:
+      - support-agent
+    tools:
+      - gpt-4
+      - redis
+      - postgresql
+    sla:
+      response_time_ms: 500
+      accuracy_percent: 90
+      availability_percent: 99.9
+
+# Global use case settings
+global:
+  monitoring:
+    enabled: true
+    metrics_collection: true
+    logging_level: INFO
+  security:
+    authentication_required: true
+    rate_limiting:
+      enabled: true
+      requests_per_minute: 1000
+  billing:
+    enabled: true
+    metering: true
+    cost_tracking: true

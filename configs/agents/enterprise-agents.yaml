@@ -1,0 +1,154 @@
+agents:
+  # Customer Support Agent
+  - id: support-agent
+    name: "Customer Support Agent"
+    type: support
+    enabled: true
+    config:
+      model: gpt-4
+      temperature: 0.7
+      max_tokens: 1000
+      capabilities:
+        - ticket_analysis
+        - response_generation
+        - sentiment_analysis
+        - escalation_detection
+      languages:
+        - en
+        - ar
+        - es
+        - fr
+    resources:
+      cpu: "500m"
+      memory: "512Mi"
+    scaling:
+      min_replicas: 2
+      max_replicas: 10
+      target_cpu_percent: 70
+
+  # Fraud Detection Agent
+  - id: fraud-agent
+    name: "Fraud Detection Agent"
+    type: fraud_detection
+    enabled: true
+    config:
+      model: custom-fraud-model
+      threshold: 0.85
+      capabilities:
+        - transaction_analysis
+        - pattern_detection
+        - risk_scoring
+        - anomaly_detection
+      real_time: true
+    resources:
+      cpu: "1000m"
+      memory: "1Gi"
+    scaling:
+      min_replicas: 3
+      max_replicas: 20
+      target_cpu_percent: 60
+
+  # Recommendation Agent
+  - id: recommendation-agent
+    name: "Recommendation Agent"
+    type: recommendation
+    enabled: true
+    config:
+      model: hybrid-recommender
+      algorithms:
+        - collaborative_filtering
+        - content_based
+        - deep_learning
+      cache_ttl: 3600
+    resources:
+      cpu: "750m"
+      memory: "768Mi"
+    scaling:
+      min_replicas: 2
+      max_replicas: 15
+      target_cpu_percent: 65
+
+  # Content Moderation Agent
+  - id: moderation-agent
+    name: "Content Moderation Agent"
+    type: content_moderation
+    enabled: true
+    config:
+      model: gpt-4
+      moderation_types:
+        - text
+        - image
+        - video
+      toxicity_threshold: 0.7
+      auto_action: true
+    resources:
+      cpu: "500m"
+      memory: "512Mi"
+    scaling:
+      min_replicas: 2
+      max_replicas: 12
+      target_cpu_percent: 70
+
+  # Code Review Agent
+  - id: code-review-agent
+    name: "Code Review Agent"
+    type: code_review
+    enabled: true
+    config:
+      model: codellama
+      analysis_types:
+        - static_analysis
+        - security_scan
+        - best_practices
+        - performance
+      languages:
+        - python
+        - javascript
+        - typescript
+        - java
+        - go
+    resources:
+      cpu: "1000m"
+      memory: "1Gi"
+    scaling:
+      min_replicas: 1
+      max_replicas: 8
+      target_cpu_percent: 75
+
+  # Data Analysis Agent
+  - id: data-analysis-agent
+    name: "Data Analysis Agent"
+    type: data_analysis
+    enabled: true
+    config:
+      model: gpt-4
+      capabilities:
+        - statistical_analysis
+        - visualization
+        - reporting
+        - prediction
+      output_formats:
+        - json
+        - csv
+        - pdf
+    resources:
+      cpu: "750m"
+      memory: "1Gi"
+    scaling:
+      min_replicas: 1
+      max_replicas: 10
+      target_cpu_percent: 70
+
+# Global agent settings
+global:
+  timeout_seconds: 300
+  retry_attempts: 3
+  log_level: INFO
+  monitoring:
+    enabled: true
+    metrics_port: 9090
+  security:
+    api_key_required: true
+    rate_limiting:
+      enabled: true
+      requests_per_minute: 100

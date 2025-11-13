@@ -1,23 +1,226 @@
 version: '3.8'
 
 services:
-  # Core Infrastructure
+  # ============================================
+  # API Gateway
+  # ============================================
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - AI_SERVING_URL=http://ai-serving:8001
+      - AGENTS_URL=http://agents-orchestrator:8002
+      - AUTH_URL=http://auth:8003
+    depends_on:
+      - ai-serving
+      - agents-orchestrator
+      - auth
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  # ============================================
+  # Core AI Services
+  # ============================================
+  ai-serving:
+    build: ./services/ai-serving
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  agents-orchestrator:
+    build: ./services/agents-orchestrator
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - AI_SERVING_URL=http://ai-serving:8001
+    depends_on:
+      - ai-serving
+      - redis
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  # ============================================
+  # Platform Services
+  # ============================================
+  auth:
+    build: ./services/auth
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ai_platform
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  billing:
+    build: ./services/billing
+    ports:
+      - "8004:8004"
+    environment:
+      - PORT=8004
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ai_platform
+    depends_on:
+      - postgres
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  admin-api:
+    build: ./services/admin-api
+    ports:
+      - "8005:8005"
+    environment:
+      - PORT=8005
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ai_platform
+      - AUTH_URL=http://auth:8003
+    depends_on:
+      - postgres
+      - auth
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  # ============================================
+  # Use Case Services
+  # ============================================
+  support:
+    build: ./services/usecases/support
+    ports:
+      - "9001:9001"
+    environment:
+      - PORT=9001
+      - AI_SERVING_URL=http://ai-serving:8001
+    depends_on:
+      - ai-serving
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  fraud:
+    build: ./services/usecases/fraud
+    ports:
+      - "9002:9002"
+    environment:
+      - PORT=9002
+      - AI_SERVING_URL=http://ai-serving:8001
+    depends_on:
+      - ai-serving
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  recommendation:
+    build: ./services/usecases/recommendation
+    ports:
+      - "9003:9003"
+    environment:
+      - PORT=9003
+      - AI_SERVING_URL=http://ai-serving:8001
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - ai-serving
+      - redis
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  moderation:
+    build: ./services/usecases/moderation
+    ports:
+      - "9004:9004"
+    environment:
+      - PORT=9004
+      - AI_SERVING_URL=http://ai-serving:8001
+    depends_on:
+      - ai-serving
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  # ============================================
+  # Databases
+  # ============================================
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ai_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ai-platform
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
     volumes:
-      - redis-data:/data
+      - redis_data:/data
+    networks:
+      - ai-platform
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   elasticsearch:
     image: elasticsearch:8.11.0
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
       - "9200:9200"
     volumes:
-      - es-data:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+  # ============================================
+  # Message Queue
+  # ============================================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ai-platform
+    restart: unless-stopped
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -28,7 +231,11 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ai-platform
+    restart: unless-stopped
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -36,27 +243,53 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - ai-platform
+    restart: unless-stopped
 
-  # Monitoring
+  # ============================================
+  # Monitoring & Observability
+  # ============================================
   prometheus:
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - ai-platform
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - "3002:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
-      - grafana-data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - ai-platform
+    restart: unless-stopped
+
+networks:
+  ai-platform:
+    driver: bridge
 
 volumes:
-  redis-data:
-  es-data:
-  prometheus-data:
-  grafana-data:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:
+  rabbitmq_data:
+  prometheus_data:
+  grafana_data:

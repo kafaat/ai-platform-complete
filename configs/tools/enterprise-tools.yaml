@@ -1,0 +1,154 @@
+tools:
+  # AI Models
+  ai_models:
+    - name: gpt-4
+      provider: openai
+      type: llm
+      enabled: true
+      config:
+        api_key_env: OPENAI_API_KEY
+        max_tokens: 4096
+        temperature: 0.7
+      cost:
+        input_per_1k_tokens: 0.03
+        output_per_1k_tokens: 0.06
+
+    - name: claude-3
+      provider: anthropic
+      type: llm
+      enabled: true
+      config:
+        api_key_env: ANTHROPIC_API_KEY
+        max_tokens: 4096
+      cost:
+        input_per_1k_tokens: 0.015
+        output_per_1k_tokens: 0.075
+
+    - name: codellama
+      provider: meta
+      type: code_llm
+      enabled: true
+      config:
+        model_size: 34b
+        quantization: 4bit
+      cost:
+        self_hosted: true
+
+  # Databases
+  databases:
+    - name: postgresql
+      type: relational
+      enabled: true
+      config:
+        host: postgres
+        port: 5432
+        database: ai_platform
+        max_connections: 100
+      backup:
+        enabled: true
+        schedule: "0 2 * * *"
+        retention_days: 30
+
+    - name: redis
+      type: cache
+      enabled: true
+      config:
+        host: redis
+        port: 6379
+        max_memory: 2gb
+        eviction_policy: allkeys-lru
+
+    - name: elasticsearch
+      type: search
+      enabled: true
+      config:
+        hosts:
+          - elasticsearch:9200
+        index_prefix: ai-platform
+        shards: 3
+        replicas: 1
+
+  # Message Queues
+  message_queues:
+    - name: rabbitmq
+      type: message_broker
+      enabled: true
+      config:
+        host: rabbitmq
+        port: 5672
+        vhost: /ai-platform
+        prefetch_count: 10
+
+  # Monitoring & Observability
+  monitoring:
+    - name: prometheus
+      type: metrics
+      enabled: true
+      config:
+        port: 9090
+        scrape_interval: 15s
+        retention: 15d
+
+    - name: grafana
+      type: visualization
+      enabled: true
+      config:
+        port: 3002
+        admin_password_env: GRAFANA_PASSWORD
+
+    - name: jaeger
+      type: tracing
+      enabled: true
+      config:
+        collector_port: 14268
+        query_port: 16686
+
+  # Storage
+  storage:
+    - name: s3
+      type: object_storage
+      enabled: true
+      config:
+        bucket: ai-platform-data
+        region: us-east-1
+        access_key_env: AWS_ACCESS_KEY_ID
+        secret_key_env: AWS_SECRET_ACCESS_KEY
+
+  # Security
+  security:
+    - name: vault
+      type: secrets_management
+      enabled: false
+      config:
+        address: http://vault:8200
+        token_env: VAULT_TOKEN
+
+    - name: oauth2
+      type: authentication
+      enabled: true
+      config:
+        providers:
+          - google
+          - github
+          - microsoft
+
+  # Development Tools
+  development:
+    - name: swagger
+      type: api_docs
+      enabled: true
+      config:
+        path: /api/docs
+        
+    - name: redoc
+      type: api_docs
+      enabled: true
+      config:
+        path: /api/redoc
+
+# Global tool settings
+global:
+  environment: production
+  region: us-east-1
+  log_level: INFO
+  health_check_interval: 30s

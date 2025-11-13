@@ -1,0 +1,135 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'ai-platform'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # AI Serving Service
+  - job_name: 'ai-serving'
+    static_configs:
+      - targets: ['ai-serving:8001']
+    metrics_path: '/metrics'
+
+  # Agents Orchestrator
+  - job_name: 'agents-orchestrator'
+    static_configs:
+      - targets: ['agents-orchestrator:8002']
+    metrics_path: '/metrics'
+
+  # Authentication Service
+  - job_name: 'auth'
+    static_configs:
+      - targets: ['auth:8003']
+    metrics_path: '/metrics'
+
+  # Billing Service
+  - job_name: 'billing'
+    static_configs:
+      - targets: ['billing:8004']
+    metrics_path: '/metrics'
+
+  # Admin API
+  - job_name: 'admin-api'
+    static_configs:
+      - targets: ['admin-api:8005']
+    metrics_path: '/metrics'
+
+  # API Gateway
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8000']
+    metrics_path: '/metrics'
+
+  # Use Case Services
+  - job_name: 'support-service'
+    static_configs:
+      - targets: ['support:9001']
+    metrics_path: '/metrics'
+
+  - job_name: 'fraud-service'
+    static_configs:
+      - targets: ['fraud:9002']
+    metrics_path: '/metrics'
+
+  - job_name: 'recommendation-service'
+    static_configs:
+      - targets: ['recommendation:9003']
+    metrics_path: '/metrics'
+
+  - job_name: 'moderation-service'
+    static_configs:
+      - targets: ['moderation:9004']
+    metrics_path: '/metrics'
+
+  # Legacy Systems (7 original systems)
+  - job_name: 'devops-automation'
+    static_configs:
+      - targets: ['devops-automation:3001']
+    metrics_path: '/metrics'
+
+  - job_name: 'documentation-automation'
+    static_configs:
+      - targets: ['documentation-automation:3002']
+    metrics_path: '/metrics'
+
+  - job_name: 'cloud-cost-optimization'
+    static_configs:
+      - targets: ['cloud-cost-optimization:3003']
+    metrics_path: '/metrics'
+
+  - job_name: 'ai-code-review'
+    static_configs:
+      - targets: ['ai-code-review:3004']
+    metrics_path: '/metrics'
+
+  - job_name: 'data-pipeline-orchestration'
+    static_configs:
+      - targets: ['data-pipeline-orchestration:3005']
+    metrics_path: '/metrics'
+
+  - job_name: 'customer-experience'
+    static_configs:
+      - targets: ['customer-experience:3006']
+    metrics_path: '/metrics'
+
+  - job_name: 'security-operations-center'
+    static_configs:
+      - targets: ['security-operations-center:3007']
+    metrics_path: '/metrics'
+
+  # Infrastructure Services
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+
+  # Node Exporter (for host metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
